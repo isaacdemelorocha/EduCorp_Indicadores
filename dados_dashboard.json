@@ -1,0 +1,21 @@
+{
+  "colaboradoresTreinados": 120,
+  "treinamentosOferecidos": 15,
+  "horasPorColaborador": 35,
+  "taxaConclusaoPercent": 85,
+  "npsTreinamento": 72,
+  "orcamentoUtilizadoPercent": 65,
+  "notaPreTreinamento": 6.8,
+  "notaPosTreinamento": 8.7,
+  "acessosDia": 150,
+  "acessosSemana": 850,
+  "acessosMes": 3200,
+  "acessosVideo": 900,
+  "acessosLeitura": 500,
+  "acessosWorkshop": 300,
+  "adesaoRH": 90,
+  "adesaoTI": 80,
+  "adesaoFinanceiro": 70,
+  "adesaoComercial": 75,
+  "adesaoOperacoes": 65
+}
