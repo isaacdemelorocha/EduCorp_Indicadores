@@ -2,14 +2,21 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Educação Corporativa</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Fonte Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet" />
   <style>
     body {
       background-color: #f5f7fa;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
+
+    body, h1, h2, h3, h4, h5, h6, p, .kpi-title, .kpi-value, .chart-title, canvas {
+      font-family: 'Montserrat', sans-serif !important;
+    }
+
     h1, h2, h3 {
       font-weight: 600;
     }
@@ -25,22 +32,76 @@
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      cursor: default;
+    }
+    .kpi-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
     }
     .kpi-title {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #6c757d;
     }
     .kpi-value {
-      font-size: 1.6rem;
+      font-size: 2rem;
       font-weight: bold;
       color: #212529;
+      margin-top: 5px;
     }
-    canvas {
+    /* Layout dos KPIs: 3 por linha no desktop, responsivo */
+    .kpi-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .kpi-card-wrapper {
+      flex: 1 1 calc(33.333% - 20px);
+      max-width: calc(33.333% - 20px);
+    }
+    @media (max-width: 768px) {
+      .kpi-card-wrapper {
+        flex: 1 1 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+      }
+    }
+    @media (max-width: 480px) {
+      .kpi-card-wrapper {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+
+    /* Grid dos gráficos: 4 por linha */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .chart-container {
       background: white;
       border-radius: 10px;
-      padding: 10px;
-      margin-top: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .chart-container:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .chart-title {
+      margin-bottom: 10px;
+      color: #0d6efd;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    canvas {
+      width: 100% !important;
+      height: 180px !important;
     }
   </style>
 </head>
@@ -48,47 +109,47 @@
 
 <div class="container py-4">
 
-  <!-- Macro: Título e Resumo -->
-  <header class="mb-4">
+  <!-- Título e Resumo -->
+  <header class="mb-4 text-center">
     <h1 class="text-primary">📊 Dashboard de Educação Corporativa</h1>
-    <p class="text-muted">Resumo executivo de desempenho e engajamento com base nos dados do arquivo <code>dados_dashboard.xlsx</code>.</p>
+    <p class="text-muted">Resumo executivo de desempenho e engajamento com base nos dados do arquivo <code>dados_dashboard.json</code>.</p>
   </header>
 
-  <!-- Indicadores-chave (KPI Cards) -->
+  <!-- KPIs -->
   <section>
-    <h2 class="section-title">🔍 Visão Geral</h2>
-    <div class="row">
-      <div class="col-md-4">
+    <h2 class="section-title text-center">🔍 Visão Geral</h2>
+    <div class="kpi-row">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">Colaboradores Treinados</div>
           <div class="kpi-value" id="colaboradores">–</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">Treinamentos Oferecidos</div>
           <div class="kpi-value" id="treinamentos">–</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">Horas por Colaborador</div>
           <div class="kpi-value" id="horas">–</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">Taxa de Conclusão</div>
           <div class="kpi-value" id="conclusao">–</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">NPS do Treinamento</div>
           <div class="kpi-value" id="nps">–</div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="kpi-card-wrapper">
         <div class="kpi-card">
           <div class="kpi-title">% Orçamento Utilizado</div>
           <div class="kpi-value" id="orcamento">–</div>
@@ -97,135 +158,151 @@
     </div>
   </section>
 
-  <!-- Micro: Gráficos -->
+  <!-- Gráficos -->
   <section>
-    <h2 class="section-title">📈 Indicadores Visuais</h2>
-    <div class="row">
-      <div class="col-md-6">
-        <h5>Desempenho Antes vs Depois</h5>
-        <canvas id="graficoDesempenho" height="160"></canvas>
+    <h2 class="section-title text-center">📈 Indicadores Visuais</h2>
+    <div class="charts-grid">
+      <div class="chart-container">
+        <h5 class="chart-title">Desempenho Antes vs Depois</h5>
+        <canvas id="graficoDesempenho"></canvas>
       </div>
-      <div class="col-md-6">
-        <h5>Acessos por Período</h5>
-        <canvas id="graficoAcessos" height="160"></canvas>
+      <div class="chart-container">
+        <h5 class="chart-title">Acessos por Período</h5>
+        <canvas id="graficoAcessos"></canvas>
       </div>
-      <div class="col-md-6">
-        <h5>Tipos de Conteúdo Acessados</h5>
-        <canvas id="graficoConteudo" height="160"></canvas>
+      <div class="chart-container">
+        <h5 class="chart-title">Tipos de Conteúdo Acessados</h5>
+        <canvas id="graficoConteudo"></canvas>
       </div>
-      <div class="col-md-6">
-        <h5>Adesão por Setor</h5>
-        <canvas id="graficoSetor" height="160"></canvas>
+      <div class="chart-container">
+        <h5 class="chart-title">Adesão por Setor</h5>
+        <canvas id="graficoSetor"></canvas>
       </div>
     </div>
   </section>
+
 </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-async function carregarDadosDashboard() {
-  try {
-    const response = await fetch('dados_dashboard.xlsx');
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(worksheet);
-    const dados = json[0];
+  async function carregarDadosDashboard() {
+    try {
+      const response = await fetch('dados_dashboard.json');
+      if (!response.ok) throw new Error('Não foi possível carregar o arquivo JSON');
+      const dados = await response.json();
 
-    // Atualiza KPIs
-    document.getElementById('colaboradores').textContent = dados['Colaboradores Treinados'] || '–';
-    document.getElementById('treinamentos').textContent = dados['Treinamentos Oferecidos'] || '–';
-    document.getElementById('horas').textContent = dados['Horas por Colaborador'] || '–';
-    document.getElementById('conclusao').textContent = (dados['Taxa Conclusao (%)'] || 0) + '%';
-    document.getElementById('nps').textContent = dados['NPS Treinamento'] || '–';
-    document.getElementById('orcamento').textContent = (dados['% Orcamento Usado'] || 0) + '%';
+      // Atualizar KPIs
+      document.getElementById('colaboradores').textContent = dados.colaboradoresTreinados ?? '–';
+      document.getElementById('treinamentos').textContent = dados.treinamentosOferecidos ?? '–';
+      document.getElementById('horas').textContent = dados.horasPorColaborador ?? '–';
+      document.getElementById('conclusao').textContent = (dados.taxaConclusaoPercent ?? 0) + '%';
+      document.getElementById('nps').textContent = dados.npsTreinamento ?? '–';
+      document.getElementById('orcamento').textContent = (dados.orcamentoUtilizadoPercent ?? 0) + '%';
 
-    // Gráfico 1: Desempenho Antes vs Depois
-    new Chart(document.getElementById('graficoDesempenho'), {
-      type: 'bar',
-      data: {
-        labels: ['Antes', 'Depois'],
-        datasets: [{
-          label: 'Nota Média',
-          data: [dados['Nota Pre-Treinamento'], dados['Nota Pos-Treinamento']],
-          backgroundColor: ['#dc3545', '#198754']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
-    });
+      // Gráfico 1: Desempenho Antes vs Depois
+      new Chart(document.getElementById('graficoDesempenho'), {
+        type: 'bar',
+        data: {
+          labels: ['Antes', 'Depois'],
+          datasets: [{
+            label: 'Nota Média',
+            data: [dados.notaPreTreinamento ?? 0, dados.notaPosTreinamento ?? 0],
+            backgroundColor: ['#dc3545', '#198754']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 10 }
+          }
+        }
+      });
 
-    // Gráfico 2: Acessos por Período
-    new Chart(document.getElementById('graficoAcessos'), {
-      type: 'line',
-      data: {
-        labels: ['Dia', 'Semana', 'Mês'],
-        datasets: [{
-          label: 'Acessos',
-          data: [dados['Acessos Dia'], dados['Acessos Semana'], dados['Acessos Mes']],
-          borderColor: '#0d6efd',
-          backgroundColor: 'rgba(13, 110, 253, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
-    });
+      // Gráfico 2: Acessos por Período
+      new Chart(document.getElementById('graficoAcessos'), {
+        type: 'line',
+        data: {
+          labels: ['Dia', 'Semana', 'Mês'],
+          datasets: [{
+            label: 'Acessos',
+            data: [dados.acessosDia ?? 0, dados.acessosSemana ?? 0, dados.acessosMes ?? 0],
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true }
+          }
+        }
+      });
 
-    // Gráfico 3: Conteúdo Acessado
-    new Chart(document.getElementById('graficoConteudo'), {
-      type: 'pie',
-      data: {
-        labels: ['Vídeo', 'Leitura', 'Workshop'],
-        datasets: [{
-          data: [dados['Acessos Video'], dados['Acessos Leitura'], dados['Acessos Workshop']],
-          backgroundColor: ['#ffc107', '#20c997', '#6f42c1']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
+      // Gráfico 3: Tipos de Conteúdo Acessados
+      new Chart(document.getElementById('graficoConteudo'), {
+        type: 'pie',
+        data: {
+          labels: ['Vídeo', 'Leitura', 'Workshop'],
+          datasets: [{
+            data: [dados.acessosVideo ?? 0, dados.acessosLeitura ?? 0, dados.acessosWorkshop ?? 0],
+            backgroundColor: ['#ffc107', '#20c997', '#6f42c1']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
 
-    // Gráfico 4: Adesão por Setor
-    new Chart(document.getElementById('graficoSetor'), {
-      type: 'bar',
-      data: {
-        labels: ['RH', 'TI', 'Financeiro', 'Comercial', 'Operações'],
-        datasets: [{
-          label: 'Adesão (%)',
-          data: [
-            dados['Adesao RH'], dados['Adesao TI'],
-            dados['Adesao Financeiro'], dados['Adesao Comercial'],
-            dados['Adesao Operacoes']
-          ],
-          backgroundColor: '#6610f2'
-        }]
-      },
-      options: {
-        responsive: true,
-        indexAxis: 'y',
-        plugins: { legend: { display: false } }
-      }
-    });
+      // Gráfico 4: Adesão por Setor
+      new Chart(document.getElementById('graficoSetor'), {
+        type: 'bar',
+        data: {
+          labels: ['RH', 'TI', 'Financeiro', 'Comercial', 'Operações'],
+          datasets: [{
+            label: 'Adesão (%)',
+            data: [
+              dados.adesaoRH ?? 0,
+              dados.adesaoTI ?? 0,
+              dados.adesaoFinanceiro ?? 0,
+              dados.adesaoComercial ?? 0,
+              dados.adesaoOperacoes ?? 0
+            ],
+            backgroundColor: '#6610f2'
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { beginAtZero: true, max: 100 }
+          }
+        }
+      });
 
-  } catch (err) {
-    console.error("Erro ao carregar o arquivo:", err);
-    alert("Erro ao carregar dados_dashboard.xlsx. Verifique se o arquivo está no diretório e se você está usando um servidor local.");
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      alert('Erro ao carregar dados do dashboard. Confira se o arquivo "dados_dashboard.json" está disponível e se está executando via servidor local.');
+    }
   }
-}
 
-// Executar ao carregar a página
-window.onload = carregarDadosDashboard;
+  // Executa ao carregar a página
+  window.onload = carregarDadosDashboard;
 </script>
 
 </body>
